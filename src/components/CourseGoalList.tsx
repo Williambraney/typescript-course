@@ -1,5 +1,8 @@
 import CourseGoal from "./CourseGoal";
+import InfoBox from "./InfoBox";
 import type { CourseGoal as CourseGoalType } from "../App";
+import type { ReactNode } from "react";
+
 type CourseGoalListProps = {
     goals: CourseGoalType[];
     onDeleteGoal: (id: number) => void;
@@ -10,7 +13,24 @@ export default function CourseGoalList({
     onDeleteGoal
 }: CourseGoalListProps) {
 
+    if(goals.length === 0) {
+
+        return <InfoBox  mode="hint">
+            You have no course goals yet. Start adding some!
+        </InfoBox>
+    }
+
+    let warningBox: ReactNode;
+
+    if( goals.length >= 4){
+        warningBox = <InfoBox mode="warning" severity = "high">
+            You have {goals.length} course goals. Consider reducing the number for better focus.
+        </InfoBox>;
+    }
+
     return (
+        <>
+            {warningBox}
             <ul>
                 {
                     goals.map((goal: {
@@ -34,6 +54,7 @@ export default function CourseGoalList({
                     ))
                 }
             </ul>
+        </>
     )
 
 };
