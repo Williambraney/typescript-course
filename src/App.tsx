@@ -1,6 +1,6 @@
 import './App.css'
 import CourseGoal from './components/CourseGoal'
-import Header from './components/header'
+import Header from './components/Header'
 import goalsImg from './assets/goals.svg'
 import { useRef, useState } from 'react';
 import CourseGoalList from './components/CourseGoalList';
@@ -9,6 +9,10 @@ import Input from './components/Input';
 import Button from './components/Button';
 import Container from './components/Container';
 import Form, { type FormHandle } from './components/Form';
+import TimerHeader from './components/TimerHeader';
+import TimersContextProvider from './store/timers-context';
+import AddTimer from './components/AddTimer';
+import Timers from './components/Timers';
 
 export type CourseGoal = {
   title: string;
@@ -127,6 +131,13 @@ function App() {
           Save
         </Button>
       </Form>
+      <TimersContextProvider>
+      <TimerHeader />
+      <div>
+        <AddTimer />
+        <Timers />
+      </div>
+      </TimersContextProvider>
     </main>
   )
 }
