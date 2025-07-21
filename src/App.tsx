@@ -2,9 +2,13 @@ import './App.css'
 import CourseGoal from './components/CourseGoal'
 import Header from './components/header'
 import goalsImg from './assets/goals.svg'
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import CourseGoalList from './components/CourseGoalList';
 import NewGoal from './components/NewGoal';
+import Input from './components/Input';
+import Button from './components/Button';
+import Container from './components/Container';
+import Form, { type FormHandle } from './components/Form';
 
 export type CourseGoal = {
   title: string;
@@ -13,6 +17,10 @@ export type CourseGoal = {
 }
 
 function App() {
+
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const customFormRef = useRef<FormHandle>(null)
 
   const [goals, setGoals] = useState<CourseGoal[]>([]);
 
@@ -40,6 +48,22 @@ function App() {
       return prevGoals.filter(goal => goal.id !== id);
     });
   }
+
+  function handleSave(data: unknown) {
+    console.log('Form data saved:', data);
+
+    const extractedData = data as {
+      email: string;
+      password: string;
+    }
+
+    console.log('Email:', extractedData.email);
+    console.log('Password:', extractedData.password);
+
+    customFormRef.current?.clear(); // Call the clear method on the form ref
+
+
+  }
  
   return (
     <main>
@@ -59,8 +83,52 @@ function App() {
           goals={goals}
           onDeleteGoal={handleDeleteGoal}
         />
+
+      <Input
+        label="Your name"
+        id="name"
+      />
+      <Input
+        label="Your age"
+        id="age"
+        type = "number"
+        disabled = {true}
+        ref = {inputRef}
+      />
+      <Button>
+        A button
+      </Button>
+      <Button href ='https://google.com'>
+        An anchor
+      </Button>
+      <Container 
+        as = {Button}
+        onClick={() => alert('Container Button Clicked')}
+      >
+        Click me
+      </Container>
+      <Form
+        onSave = {handleSave}
+        ref = {customFormRef}
+      >
+        <Input 
+          label="Your email"
+          id="email"
+          type="email"
+          required
+        />
+        <Input 
+          label="Your password"
+          id="password"
+          type="password"
+          required
+        />
+        <Button type="submit">
+          Save
+        </Button>
+      </Form>
     </main>
   )
 }
 
-export default App
+export default App;
