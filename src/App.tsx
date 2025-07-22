@@ -1,8 +1,8 @@
 import './App.css'
 import CourseGoal from './components/CourseGoal'
-import Header from './components/Header'
+import Header from './components/header'
 import goalsImg from './assets/goals.svg'
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import CourseGoalList from './components/CourseGoalList';
 import NewGoal from './components/NewGoal';
 import Input from './components/Input';
@@ -14,7 +14,8 @@ import TimersContextProvider from './store/timers-context';
 import AddTimer from './components/AddTimer';
 import Timers from './components/Timers';
 import { get } from './utils/http';
-import { BlogPost } from './components/BlogPosts';
+import BlogPosts, { type BlogPost } from './components/BlogPosts';
+import ErrorMessage from './components/ErrorMessage';
 
 export type CourseGoal = {
   title: string;
@@ -22,9 +23,18 @@ export type CourseGoal = {
   id: number;
 }
 
+type RawDataBlogPost = {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+}
+
 function App() {
 
   const [fetchedPosts, setFetchedPosts] = useState<BlogPost[]>()
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -36,19 +46,37 @@ function App() {
 
     async function fetchPosts(){
 
-      const posts = get('https://jsonplaceholder.typicode.com/posts')
+      setIsFetching(true);
 
+      try{
+        
+        const data = ( await get('https://jsonplaceholder.typicode.com/posts') as RawDataBlogPost[] );
+  
+        const blogPosts: BlogPost[] = data.map( rawPost => {
+  
+          return {
+            id: rawPost.id,
+            title: rawPost.title,
+            text: rawPost.body
+          }
+  
+        });
+        setFetchedPosts(blogPosts);
+      } catch (error) {
+
+        if(error instanceof Error) { // TypeScript guard to check if error is an instance of Error
+          setError(error.message);
+        }
+      }finally {
+
+        setIsFetching(false);
+      }
+      
     }
-
-    fetchPosts()
-
-
-    setFetchedPosts(posts);
-
     
+    fetchPosts();
 
   }, [])
-
 
   function handleAddGoal( goal : string, summary: string ) {
 
@@ -90,6 +118,16 @@ function App() {
 
 
   }
+
+  let content: ReactNode;
+  
+if (isFetching) {
+  content = <p>Loading...</p>;
+} else if (error) {
+  content = <ErrorMessage text={error} />;
+} else if (fetchedPosts) {
+  content = <BlogPosts posts={fetchedPosts} />;
+}
  
   return (
     <main>
@@ -161,6 +199,7 @@ function App() {
       </div>
       </TimersContextProvider>
       <h1>Data fetching!</h1>
+      {content}
     </main>
   )
 }
