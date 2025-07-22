@@ -16,7 +16,12 @@ import Timers from './components/Timers';
 import { get } from './utils/http';
 import BlogPosts, { type BlogPost } from './components/BlogPosts';
 import ErrorMessage from './components/ErrorMessage';
-
+import CartHeader from './components/CartHeader';
+import Shop from './components/Shop';
+import { DUMMY_PRODUCTS } from './components/dummy-products';
+import Product from './components/Product';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 export type CourseGoal = {
   title: string;
   description: string;
@@ -200,6 +205,18 @@ if (isFetching) {
       </TimersContextProvider>
       <h1>Data fetching!</h1>
       {content}
+          <Provider
+            store = { store}
+          >
+      <CartHeader />
+      <Shop>
+        {DUMMY_PRODUCTS.map((product) => (
+          <li key={product.id}>
+            <Product {...product} />
+          </li>
+        ))}
+      </Shop>
+    </Provider>
     </main>
   )
 }
