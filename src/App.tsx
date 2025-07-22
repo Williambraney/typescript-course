@@ -2,7 +2,7 @@ import './App.css'
 import CourseGoal from './components/CourseGoal'
 import Header from './components/Header'
 import goalsImg from './assets/goals.svg'
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CourseGoalList from './components/CourseGoalList';
 import NewGoal from './components/NewGoal';
 import Input from './components/Input';
@@ -13,6 +13,8 @@ import TimerHeader from './components/TimerHeader';
 import TimersContextProvider from './store/timers-context';
 import AddTimer from './components/AddTimer';
 import Timers from './components/Timers';
+import { get } from './utils/http';
+import { BlogPost } from './components/BlogPosts';
 
 export type CourseGoal = {
   title: string;
@@ -22,11 +24,31 @@ export type CourseGoal = {
 
 function App() {
 
+  const [fetchedPosts, setFetchedPosts] = useState<BlogPost[]>()
+
   const inputRef = useRef<HTMLInputElement>(null)
 
   const customFormRef = useRef<FormHandle>(null)
 
   const [goals, setGoals] = useState<CourseGoal[]>([]);
+
+  useEffect(() => {
+
+    async function fetchPosts(){
+
+      const posts = get('https://jsonplaceholder.typicode.com/posts')
+
+    }
+
+    fetchPosts()
+
+
+    setFetchedPosts(posts);
+
+    
+
+  }, [])
+
 
   function handleAddGoal( goal : string, summary: string ) {
 
@@ -138,6 +160,7 @@ function App() {
         <Timers />
       </div>
       </TimersContextProvider>
+      <h1>Data fetching!</h1>
     </main>
   )
 }

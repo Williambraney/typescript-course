@@ -23,6 +23,7 @@ type TimersContextValue = TimersState & {
 
  const TimersContext = createContext<TimersContextValue | null>(null);
 
+ // eslint-disable-next-line react-refresh/only-export-components
  export function useTimersContext(){
     const timersCtx = useContext(TimersContext)
 
